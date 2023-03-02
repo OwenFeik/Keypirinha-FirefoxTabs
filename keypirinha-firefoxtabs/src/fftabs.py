@@ -77,15 +77,11 @@ def value(query, tab):
     return total
 
 
-def suggest_tabs(tabs, query, nmax=10):
+def suggest_tabs(tabs, query):
     """Suggest tabs from data which match query well."""
 
     THRESHOLD = 1.5  # Minimum value to return.
-
-    return sorted(
-        filter(lambda tab: value(query, tab) > THRESHOLD, tabs),
-        key=lambda tab: -value(query, tab),
-    )[:nmax]
+    filter(lambda tab: value(query, tab) > THRESHOLD, tabs)
 
 
 def session_files():
@@ -99,7 +95,9 @@ def session_files():
             os.getenv("APPDATA"), "Mozilla", "Firefox", "Profiles"
         )
     else:
-        return []
+        profile_folder = os.path.join(
+            os.path.expanduser("~"), ".mozilla", "firefox"
+        )
 
     files = []
     for profile in os.listdir(profile_folder):
@@ -114,19 +112,32 @@ def session_files():
     return files
 
 
-if __name__ == "__main__":
-    import sys
+def load_tabs():
+    """Load all tabs from sessionstore files."""
 
     tabs = set()
     for file in session_files():
         data = read_jsonlz4(file)
         tabs.update(tab_info(data))
+    return tabs
 
+
+def handle_query(query, nmax=10):
+    """Search all tabs with a search query."""
+
+    return sorted(
+        load_tabs(),
+        key=lambda tab: -value(query, tab),
+    )[:nmax]
+
+if __name__ == "__main__":
+    import sys
+    
     if len(sys.argv) > 1:
         query = sys.argv[1]
-        suggested = suggest_tabs(tabs, query)
+        suggested = suggest_tabs(load_tabs(), query)
     else:
-        suggested = tabs
+        suggested = load_tabs()
 
     for (i, tab) in enumerate(suggested, 1):
         print(f"[{i}]", tab)
