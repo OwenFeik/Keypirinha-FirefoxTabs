@@ -4,21 +4,10 @@ be slightly out of date as they're loaded from the session store file on disk.
 """
 
 import difflib
-import json
 import os
 import urllib.parse
 
-import lz4.block
-
-# Based on: https://gist.github.com/snorey/3eaa683d43b0e08057a82cf776fd7d83
-def read_jsonlz4(path):
-    """Load .jsonlz4 file as JSON."""
-
-    with open(path, "rb") as f:
-        f.read(8)  # file header
-        data = f.read()
-        text = lz4.block.decompress(data)
-    return json.loads(text)
+import lz4
 
 
 def tab_info(data):
@@ -95,9 +84,7 @@ def session_files():
             os.getenv("APPDATA"), "Mozilla", "Firefox", "Profiles"
         )
     else:
-        profile_folder = os.path.join(
-            os.path.expanduser("~"), ".mozilla", "firefox"
-        )
+        profile_folder = os.path.join(os.path.expanduser("~"), ".mozilla", "firefox")
 
     files = []
     for profile in os.listdir(profile_folder):
@@ -117,7 +104,7 @@ def load_tabs():
 
     tabs = set()
     for file in session_files():
-        data = read_jsonlz4(file)
+        data = lz4.read_jsonlz4(file)
         tabs.update(tab_info(data))
     return tabs
 
@@ -130,9 +117,10 @@ def handle_query(query, nmax=10):
         key=lambda tab: -value(query, tab),
     )[:nmax]
 
+
 if __name__ == "__main__":
     import sys
-    
+
     if len(sys.argv) > 1:
         query = sys.argv[1]
         suggested = suggest_tabs(load_tabs(), query)

@@ -4,6 +4,7 @@ import keypirinha as kp
 import keypirinha_util as kpu
 import keypirinha_net as kpnet
 
+
 class FirefoxTabs(kp.Plugin):
     """
     One-line description of your plugin.
@@ -31,6 +32,7 @@ class FirefoxTabs(kp.Plugin):
 
     More detailed documentation at: http://keypirinha.com/api/plugin.html
     """
+
     def __init__(self):
         super().__init__()
 
