@@ -10,13 +10,17 @@ try:
 except ImportError:
     LZ4_LIB_AVAIBLE = False
 
+
 def locate_lz4_install():
     """Returns the path of lz4, if any. Windows only."""
 
     with subprocess.Popen(["where", "lz4"], stdout=subprocess.PIPE) as proc:
         return proc.stdout.read().decode().splitlines()[-1]
 
+
 lz4_dll = None
+
+
 def load_lz4_dll():
     """Load lz4 DLL. Windows only."""
 
@@ -33,32 +37,32 @@ def load_lz4_dll():
     lz4_dll = ctypes.cdll.LoadLibrary(dll_path)
 
     # See https://github.com/lz4/lz4/blob/dev/lib/lz4.c#L2373
-    lz4_dll.LZ4_decompress_safe.restype = ctypes.c_int # Bytes decompressed
+    lz4_dll.LZ4_decompress_safe.restype = ctypes.c_int  # Bytes decompressed
     lz4_dll.LZ4_decompress_safe.argtypes = (
-        ctypes.c_char_p, # Source buffer
-        ctypes.c_char_p, # Destination buffer
-        ctypes.c_int,    # Source size
-        ctypes.c_int     # Destination size
+        ctypes.c_char_p,  # Source buffer
+        ctypes.c_char_p,  # Destination buffer
+        ctypes.c_int,  # Source size
+        ctypes.c_int,  # Destination size
     )
 
     return lz4_dll
 
 
 def lz4_decompress_safe(block):
-    """Use LZ4_decompress_safe function to decompress. Windows only."""    
+    """Use LZ4_decompress_safe function to decompress. Windows only."""
 
-    DST_CAPACITY = len(block) + 1024 * 1024 * 1024 # compressed + 1MB
+    DST_CAPACITY = len(block) + 1024 * 1024 * 1024  # compressed + 1MB
 
-    dst = ctypes.create_string_buffer(DST_CAPACITY) 
+    dst = ctypes.create_string_buffer(DST_CAPACITY)
 
     dll = load_lz4_dll()
     _ret = dll.LZ4_decompress_safe(
         ctypes.c_char_p(block),
         dst,
         ctypes.c_int(len(block)),
-        ctypes.c_int(DST_CAPACITY)
+        ctypes.c_int(DST_CAPACITY),
     )
-    
+
     if _ret < 0:
         # Failed to decode block.
         return ""
@@ -70,6 +74,7 @@ def read_lz4_system(block):
     """Discovers installed system lz4 and uses it to decode block."""
 
     return lz4_decompress_safe(block)
+
 
 def read_lz4_python(block):
     """Decode LZ4 block using the lz4 Python library."""
@@ -89,7 +94,7 @@ def read_jsonlz4(path):
 
     with open(path, "rb") as f:
         f.read(MOZ_HEADER_LEN)
-        block = f.read() # Block of LZ4
+        block = f.read()  # Block of LZ4
 
     # Use Python library if available, fall back to system install.
     if LZ4_LIB_AVAIBLE:
