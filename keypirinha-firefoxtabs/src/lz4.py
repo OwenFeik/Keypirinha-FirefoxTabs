@@ -14,9 +14,12 @@ except ImportError:
 def locate_lz4_install():
     """Returns the path of lz4, if any. Windows only."""
 
-    with subprocess.Popen(["where", "lz4"], stdout=subprocess.PIPE) as proc:
-        return proc.stdout.read().decode().splitlines()[-1]
+    with subprocess.Popen(["where", "lz4.exe"], stdout=subprocess.PIPE) as proc:
+        path = proc.stdout.read().decode().strip()
+        if proc.returncode or not path:
+            raise RuntimeError("lz4 not found in PATH.")
 
+        return path
 
 lz4_dll = None
 
@@ -51,7 +54,7 @@ def load_lz4_dll():
 def lz4_decompress_safe(block):
     """Use LZ4_decompress_safe function to decompress. Windows only."""
 
-    DST_CAPACITY = len(block) + 1024 * 1024 * 1024  # compressed + 1MB
+    DST_CAPACITY = len(block) + 1024 * 1024 * 1024   # compressed + 1MB
 
     dst = ctypes.create_string_buffer(DST_CAPACITY)
 
@@ -63,15 +66,24 @@ def lz4_decompress_safe(block):
         ctypes.c_int(DST_CAPACITY),
     )
 
+    # Failed to decode block.
     if _ret < 0:
-        # Failed to decode block.
-        return ""
+        raise RuntimeError("Failed to decompress block.")
 
-    return dst.value.decode()
+    # Sometimes there is a few random characters after the end of the JSON.
+    # Strip remove these.
+    data = dst.value.decode()
+    i = len(data)
+    while data[i - 1] != '}':
+        i -= 1
+    return data[:i] 
 
 
 def read_lz4_system(block):
     """Discovers installed system lz4 and uses it to decode block."""
+
+    if os.name != "nt":
+        raise NotImplementedError("Unsupported OS.")
 
     return lz4_decompress_safe(block)
 

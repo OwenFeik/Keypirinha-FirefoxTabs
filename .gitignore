@@ -1,2 +1,3 @@
-keypirinha-firefoxtabs/build/*
+__pycache__
+build
 SDK
