@@ -1,52 +1,53 @@
 # Keypirinha launcher (keypirinha.com)
 
+import time
+
 import keypirinha as kp
 import keypirinha_util as kpu
 import keypirinha_net as kpnet
 
+from .lib import cacher, tabs
+
 
 class FirefoxTabs(kp.Plugin):
     """
-    One-line description of your plugin.
-
-    This block is a longer and more detailed description of your plugin that may
-    span on several lines, albeit not being required by the application.
-
-    You may have several plugins defined in this module. It can be useful to
-    logically separate the features of your package. All your plugin classes
-    will be instantiated by Keypirinha as long as they are derived directly or
-    indirectly from :py:class:`keypirinha.Plugin` (aliased ``kp.Plugin`` here).
-
-    In case you want to have a base class for your plugins, you must prefix its
-    name with an underscore (``_``) to indicate Keypirinha it is not meant to be
-    instantiated directly.
-
-    In rare cases, you may need an even more powerful way of telling Keypirinha
-    what classes to instantiate: the ``__keypirinha_plugins__`` global variable
-    may be declared in this module. It can be either an iterable of class
-    objects derived from :py:class:`keypirinha.Plugin`; or, even more dynamic,
-    it can be a callable that returns an iterable of class objects. Check out
-    the ``StressTest`` example from the SDK for an example.
-
-    Up to 100 plugins are supported per module.
-
-    More detailed documentation at: http://keypirinha.com/api/plugin.html
+    Switches to open Firefox tabs.
     """
+
+    ITEM_TEMPLATE = "Tab \u2022 {}"
+    FUZZY_TRESH = 400
 
     def __init__(self):
         super().__init__()
+        self.cacher = cacher.Cacher()
 
     def on_start(self):
-        pass
+        self.cacher.update()
 
     def on_catalog(self):
-        pass
+        self.cacher.update()
+        self.set_catalog([self._create_item("Tab", "Switch to an open tab")])
 
     def on_suggest(self, user_input, items_chain):
-        pass
+        suggestions = []
+        open_tabs = self.cacher.all_tabs()
+
+        for tab in open_tabs:
+            (title, url) = tab
+            if (
+                len(user_input) == 0
+                or kpu.fuzzy_score(user_input, title) > FirefoxTabs.FUZZY_TRESH
+                or kpu.fuzzy_score(user_input, url) > FirefoxTabs.FUZZY_TRESH
+            ):
+                suggestion = self._create_item_from_tab(tab)
+                suggestions.append(suggestion)
+
+        if suggestions:
+            self.set_suggestions(suggestions)
 
     def on_execute(self, item, action):
-        pass
+        if item:
+            tabs.launch_tab(item.target())
 
     def on_activated(self):
         pass
@@ -57,12 +58,19 @@ class FirefoxTabs(kp.Plugin):
     def on_events(self, flags):
         pass
 
-    def create_item_from_tab(self, tab):
+    def _create_item_from_tab(self, tab):
         (title, url) = tab
-        self.create_item(
-            kp.ItemCategory.URL,
-            title,
-            f"{title} ({url})",
-            url,
-            kp.ItemArgsHint.FORBIDDEN,
+        item = self._create_item(
+            FirefoxTabs.ITEM_TEMPLATE.format(title), url, target=url
+        )
+        return item
+
+    def _create_item(self, label, short_desc, target="tab"):
+        return self.create_item(
+            category=kp.ItemCategory.URL,
+            label=label,
+            short_desc=short_desc,
+            target=target,
+            args_hint=kp.ItemArgsHint.FORBIDDEN,
+            hit_hint=kp.ItemHitHint.NOARGS,
         )

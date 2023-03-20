@@ -7,7 +7,7 @@ import difflib
 import os
 import urllib.parse
 
-import lz4
+from . import lz4
 
 
 def tab_info(data):
@@ -99,13 +99,19 @@ def session_files():
     return files
 
 
-def load_tabs():
+def load_session_tabs(path):
+    """Load the list of tabs from a sessionstor file path."""
+
+    data = lz4.read_jsonlz4(path)
+    return tab_info(data)
+
+
+def load_all_tabs():
     """Load all tabs from sessionstore files."""
 
     tabs = set()
     for file in session_files():
-        data = lz4.read_jsonlz4(file)
-        tabs.update(tab_info(data))
+        tabs.update(load_session_tabs(file))
     return tabs
 
 
@@ -113,9 +119,13 @@ def handle_query(query, nmax=10):
     """Search all tabs with a search query."""
 
     return sorted(
-        load_tabs(),
+        load_all_tabs(),
         key=lambda tab: -value(query, tab),
     )[:nmax]
+
+
+def launch_tab(url):
+    """Launch Firefox to switch to the given URL."""
 
 
 if __name__ == "__main__":
@@ -123,9 +133,9 @@ if __name__ == "__main__":
 
     if len(sys.argv) > 1:
         query = sys.argv[1]
-        suggested = suggest_tabs(load_tabs(), query)
+        suggested = suggest_tabs(load_all_tabs(), query)
     else:
-        suggested = load_tabs()
+        suggested = load_all_tabs()
 
-    for (i, tab) in enumerate(suggested, 1):
+    for i, tab in enumerate(suggested, 1):
         print(f"[{i}]", tab)

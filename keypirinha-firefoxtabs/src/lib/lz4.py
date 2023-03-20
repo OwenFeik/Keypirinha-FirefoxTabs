@@ -21,6 +21,7 @@ def locate_lz4_install():
 
         return path
 
+
 lz4_dll = None
 
 
@@ -54,7 +55,7 @@ def load_lz4_dll():
 def lz4_decompress_safe(block):
     """Use LZ4_decompress_safe function to decompress. Windows only."""
 
-    DST_CAPACITY = len(block) + 1024 * 1024 * 1024   # compressed + 1MB
+    DST_CAPACITY = len(block) + 1024 * 1024 * 1024  # compressed + 1MB
 
     dst = ctypes.create_string_buffer(DST_CAPACITY)
 
@@ -74,9 +75,9 @@ def lz4_decompress_safe(block):
     # Strip remove these.
     data = dst.value.decode()
     i = len(data)
-    while data[i - 1] != '}':
+    while data[i - 1] != "}":
         i -= 1
-    return data[:i] 
+    return data[:i]
 
 
 def read_lz4_system(block):
