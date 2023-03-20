@@ -2,7 +2,7 @@
 setlocal
 
 set PACKAGE_NAME=FirefoxTabs
-set INSTALL_DIR=C:\Users\Owen Feik\AppData\Keypirinha\portable\Profile\InstalledPackages
+set INSTALL_DIR=%APPDATA%\Keypirinha\InstalledPackages
 
 if "%1"=="" goto help
 if "%1"=="-h" goto help
@@ -41,9 +41,9 @@ if "%1"=="build" (
 )
 
 if "%1"=="install" (
-    @REM echo TODO: ensure the INSTALL_DIR variable declared at the top of this
-    @REM echo       script complies to your configuration and remove this message
-    @REM exit /1
+    echo TODO: ensure the INSTALL_DIR variable declared at the top of this
+    echo       script complies to your configuration and remove this message
+    exit /1
 
     copy /Y "%BUILD_DIR%\*.keypirinha-package" "%INSTALL_DIR%\"
     goto end

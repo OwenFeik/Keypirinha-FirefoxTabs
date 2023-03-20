@@ -5,10 +5,11 @@ const REGEX = new RegExp(`(\\?|&)${PARAM}=(?<url>.*)`)
 // a tab with the URL specified by PARAM and switch to it. If one is found,
 // close the current tab, otherwise leave it open.
 browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    const { groups: { url }} = REGEX.exec(tab.url);
-    tabUrl = decodeURIComponent(url);
-    console.log(tabUrl);
-    if (tabUrl) {
+    let match = REGEX.exec(tab.url);
+
+    if (match) {
+        const { groups: { url }} = match;
+        tabUrl = decodeURIComponent(url);
         browser.tabs.query({}).then(tabs => tabs.forEach(tab => {
             if (tab.url == tabUrl) {
                 browser.tabs.update(tab.id, { active: true });
@@ -16,5 +17,5 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                 browser.tabs.remove(tabId);
             }
         }));
-    }
+    }    
 });
