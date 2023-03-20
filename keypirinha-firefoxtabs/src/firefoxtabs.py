@@ -29,15 +29,24 @@ class FirefoxTabs(kp.Plugin):
         self.set_catalog([self._create_item("Tab", "Switch to an open tab")])
 
     def on_suggest(self, user_input, items_chain):
+        # First suggest from cached tabs, then reload the cache and resuggest.
+        # Gives a snappy rough result, then a slower but accurate result.
+        self._on_suggest(user_input, False)
+        self._on_suggest(user_input, True)
+
+    
+    def _on_suggest(self, query, update):
+        """Suggests tabs based on query. If update, updates tabs first."""
+
         suggestions = []
-        open_tabs = self.cacher.all_tabs()
+        open_tabs = self.cacher.all_tabs(update)
 
         for tab in open_tabs:
             (title, url) = tab
             if (
-                len(user_input) == 0
-                or kpu.fuzzy_score(user_input, title) > FirefoxTabs.FUZZY_TRESH
-                or kpu.fuzzy_score(user_input, url) > FirefoxTabs.FUZZY_TRESH
+                len(query) == 0
+                or kpu.fuzzy_score(query, title) > FirefoxTabs.FUZZY_TRESH
+                or kpu.fuzzy_score(query, url) > FirefoxTabs.FUZZY_TRESH
             ):
                 suggestion = self._create_item_from_tab(tab)
                 suggestions.append(suggestion)

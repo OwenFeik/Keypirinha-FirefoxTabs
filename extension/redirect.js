@@ -1,21 +1,20 @@
-const HOSTNAME = "owen.feik.xyz";
-const PATH = "redirect";
+const PARAM = "kpfftredirect";
+const REGEX = new RegExp(`(\\?|&)${PARAM}=(?<url>.*)`)
 
-// Whenever HOSTNAME/PATH is opened, close it and activate the tab specified by
-// the parameter url=TAB_URL_TO_SWITCH_TO, if any.
+// Whenever a tab is opened, if PARAM is present in URL params, attempt to find
+// a tab with the URL specified by PARAM and switch to it. If one is found,
+// close the current tab, otherwise leave it open.
 browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    let url = new URL(tab.url);
-    if (
-        url.hostname == HOSTNAME
-        && new RegExp(`\/${PATH}.*`).test(url.pathname)
-    ) {
-        let tabUrl = url.searchParams.get("url");
+    const { groups: { url }} = REGEX.exec(tab.url);
+    tabUrl = decodeURIComponent(url);
+    console.log(tabUrl);
+    if (tabUrl) {
         browser.tabs.query({}).then(tabs => tabs.forEach(tab => {
             if (tab.url == tabUrl) {
                 browser.tabs.update(tab.id, { active: true });
                 browser.windows.update(tab.windowId, { focused: true });
+                browser.tabs.remove(tabId);
             }
         }));
-        browser.tabs.remove(tabId);
     }
 });

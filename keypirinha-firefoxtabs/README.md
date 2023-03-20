@@ -3,68 +3,36 @@
 This is FirefoxTabs, a plugin for the
 [Keypirinha](http://keypirinha.com) launcher.
 
-**TODO:** write a brief description of this package. Optionally add a
-screenshot.
+FirefoxTabs, in combination with the provided Firefox extension, adds, as the
+name suggests, Firefox tabs as suggestions in Keypirinha.
 
 
 ## Download
 
-**TODO:** indicate where the latest `.keypirinha-package` file can be
-downloaded. For example a URL to the `releases` list like:
-https://github.com/USERNAME/keypirinha-PACKAGE/releases
+https://github.com/OwenFeik/fftabs/releases
 
 
 ## Install
 
-Once the `FirefoxTabs.keypirinha-package` file is installed,
-move it to the `InstalledPackage` folder located at:
+* Once you've downloaded `FirefoxTabs.keypirinha-package`, move it to the
+`InstalledPackage` folder located at:
+    * `Keypirinha\portable\Profile\InstalledPackages` in **Portable mode**
+    * **Or** `%APPDATA%\Keypirinha\InstalledPackages` in **Installed mode**
+        (the final path would look like 
+        `C:\Users\%USERNAME%\AppData\Roaming\Keypirinha\InstalledPackages`)
 
-* `Keypirinha\portable\Profile\InstalledPackages` in **Portable mode**
-* **Or** `%APPDATA%\Keypirinha\InstalledPackages` in **Installed mode** (the
-  final path would look like
-  `C:\Users\%USERNAME%\AppData\Roaming\Keypirinha\InstalledPackages`)
-
+* Then, install the Firefox extension located at `/extension`, to switch to
+    tabs when Firefox is launched by FirefoxTabs.
+* Finally install [`lz4`](https://github.com/lz4/lz4/releases) and add it to
+    `PATH` so that it can be used to decode `sessionstore.jsonlz4`.
 
 ## Usage
 
-**TODO:** list the items, if any, inserted to the Catalog by the plugin(s) of
-this package. Some plugins only make suggestions, in which case a description of
-what kind of suggestions are to be expected by the user may help.
-
-
-## Change Log
-
-**TODO:** describe notable changes for each release. Below is a template for
-version 1.0.
-
-### v1.0
-
-* Added foo item
-* Fixed bug that was doing bad things when item "bar" was selected
-
+Once installed, FirefoxTabs should automatically pick up existing sessions and
+start suggesting tabs from them. You can search on tab name or URL. If a new
+session is created, you'll need to reload the catalog for suggestions to start
+appearing from it.
 
 ## License
 
-**TODO:** recommended section. Below is an example that goes with the default
-LICENSE file (MIT license). Do not forget to add your name in the `LICENSE`
-file!
-
 This package is distributed under the terms of the MIT license.
-
-
-## Credits
-
-**TODO:** optional section.
-
-
-## Contribute
-
-**TODO:** optional section. Below is a template example, based on the one found
-in Keypirinha's Packages repository.
-
-1. Check for open issues or open a fresh issue to start a discussion around a
-   feature idea or a bug.
-2. Fork this repository on GitHub to start making your changes to the **dev**
-   branch.
-3. Send a pull request.
-4. Add yourself to the *Contributors* section below (or create it if needed)!

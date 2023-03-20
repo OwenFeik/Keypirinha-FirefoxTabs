@@ -1,4 +1,5 @@
 import subprocess
+import urllib.parse
 
 
 def exec_stdout(args):
@@ -12,7 +13,18 @@ def launch_firefox(url):
 
     FIREFOX_PATH = "C:\\Program Files\\Mozilla Firefox\\firefox.exe"
 
-    SWITCHER_URL = "owen.feik.xyz/redirect?url={}"
+    # Sentinel parameter to let the extension know to switch away from this
+    # tab. Must be the same as in /extension/redirect.js
+    PARAM = "kpfftredirect"
 
+    target = url
 
-    exec_stdout([FIREFOX_PATH, SWITCHER_URL.format(url)])
+    # Add param to the URLs query string.
+    if "?" in url:
+        target += "&"
+    else:
+        target += "?"
+    target += f"{PARAM}={urllib.parse.quote(url)}"
+
+    # Navigate to the URL, with the specified sentinel param.
+    exec_stdout([FIREFOX_PATH, target])

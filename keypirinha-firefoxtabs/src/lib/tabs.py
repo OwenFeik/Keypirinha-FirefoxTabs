@@ -12,20 +12,39 @@ from . import lz4
 
 
 class Cacher:
+    """Caches session files and tab lists to save effort."""
+
     def __init__(self):
         self.last_update = 0
-        self.session_files = session_files()
         self.tabs_by_file = {}
 
-    def update(self):
+        # Get list of session files
+        self.update_sessions()
+
+    def update_sessions(self):
+        """Reloads session list."""
+
+        self.session_files = session_files()
+
+    def update_tabs(self):
+        """Reloads tabs from sessions which have changed since last update."""
+        
         for file in self.session_files:
             if os.path.getmtime(file) > self.last_update:
                 self.tabs_by_file[file] = load_session_tabs(file)
         self.last_update = time.time()
 
+    def update(self):
+        """Reloads sessions and tabs which have changed since last update."""
+        
+        self.update_sessions()
+        self.update_tabs()
+
     def all_tabs(self, update=True):
+        """List all known open tabs. If update is True, reloads the list."""
+        
         if update:
-            self.update()
+            self.update_tabs()
 
         all_tabs = set()
         for tab_list in self.tabs_by_file.values():
