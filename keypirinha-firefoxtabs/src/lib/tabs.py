@@ -5,9 +5,33 @@ be slightly out of date as they're loaded from the session store file on disk.
 
 import difflib
 import os
+import time
 import urllib.parse
 
 from . import lz4
+
+
+class Cacher:
+    def __init__(self):
+        self.last_update = 0
+        self.session_files = session_files()
+        self.tabs_by_file = {}
+
+    def update(self):
+        for file in self.session_files:
+            if os.path.getmtime(file) > self.last_update:
+                self.tabs_by_file[file] = load_session_tabs(file)
+        self.last_update = time.time()
+
+    def all_tabs(self, update=True):
+        if update:
+            self.update()
+
+        all_tabs = set()
+        for tab_list in self.tabs_by_file.values():
+            all_tabs.update(tab_list)
+
+        return all_tabs
 
 
 def tab_info(data):
@@ -84,7 +108,9 @@ def session_files():
             os.getenv("APPDATA"), "Mozilla", "Firefox", "Profiles"
         )
     else:
-        profile_folder = os.path.join(os.path.expanduser("~"), ".mozilla", "firefox")
+        profile_folder = os.path.join(
+            os.path.expanduser("~"), ".mozilla", "firefox"
+        )
 
     files = []
     for profile in os.listdir(profile_folder):
@@ -122,10 +148,6 @@ def handle_query(query, nmax=10):
         load_all_tabs(),
         key=lambda tab: -value(query, tab),
     )[:nmax]
-
-
-def launch_tab(url):
-    """Launch Firefox to switch to the given URL."""
 
 
 if __name__ == "__main__":

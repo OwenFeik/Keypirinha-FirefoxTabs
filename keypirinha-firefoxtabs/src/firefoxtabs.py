@@ -6,7 +6,7 @@ import keypirinha as kp
 import keypirinha_util as kpu
 import keypirinha_net as kpnet
 
-from .lib import cacher, tabs
+from .lib import tabs, utils
 
 
 class FirefoxTabs(kp.Plugin):
@@ -19,7 +19,7 @@ class FirefoxTabs(kp.Plugin):
 
     def __init__(self):
         super().__init__()
-        self.cacher = cacher.Cacher()
+        self.cacher = tabs.Cacher()
 
     def on_start(self):
         self.cacher.update()
@@ -47,7 +47,7 @@ class FirefoxTabs(kp.Plugin):
 
     def on_execute(self, item, action):
         if item:
-            tabs.launch_tab(item.target())
+            utils.launch_firefox(item.target())
 
     def on_activated(self):
         pass

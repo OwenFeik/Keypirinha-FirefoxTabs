@@ -1,7 +1,8 @@
 import ctypes
 import json
 import os
-import subprocess
+
+from . import utils
 
 # In the Keypirinha interpreter, lz4 is unavailable, so we check the import.
 LZ4_LIB_AVAIBLE = True
@@ -14,12 +15,11 @@ except ImportError:
 def locate_lz4_install():
     """Returns the path of lz4, if any. Windows only."""
 
-    with subprocess.Popen(["where", "lz4.exe"], stdout=subprocess.PIPE) as proc:
-        path = proc.stdout.read().decode().strip()
-        if proc.returncode or not path:
-            raise RuntimeError("lz4 not found in PATH.")
+    path = utils.exec_stdout(["where", "lz4.exe"])
+    if not path:
+        raise RuntimeError("lz4 not found in PATH.")
 
-        return path
+    return path
 
 
 lz4_dll = None
