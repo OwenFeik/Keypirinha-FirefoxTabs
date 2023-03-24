@@ -1,5 +1,4 @@
 import subprocess
-import urllib.parse
 
 
 def exec_stdout(args):
@@ -25,7 +24,7 @@ def launch_firefox(url):
         target += "&"
     else:
         target += "?"
-    target += f"{PARAM}={urllib.parse.quote(url)}"
+    target += f"{PARAM}=go"
 
     # Navigate to the URL, with the specified sentinel param.
     exec_stdout([FIREFOX_PATH, target])
