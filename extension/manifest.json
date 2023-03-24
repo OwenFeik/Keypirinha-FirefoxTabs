@@ -1,8 +1,8 @@
 {
     "manifest_version": 2,
-    "name": "Tab Switcher",
+    "name": "Keypirinha FirefoxTabs",
     "version": "1.0",
-    "description": "Attempt to switch to open tab.",
+    "description": "Used by Keypirinha plugin to switch to open tab.",
     "background": {
         "scripts": ["redirect.js"],
         "persistent": false
