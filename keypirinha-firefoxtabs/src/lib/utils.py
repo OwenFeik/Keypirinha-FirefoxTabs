@@ -8,6 +8,7 @@ def exec_stdout(args):
     with subprocess.Popen(args, stdout=subprocess.PIPE) as proc:
         return proc.stdout.read().decode().strip()
 
+
 def launch_firefox(url):
     """Launch Firefox to switch to the given URL."""
 

@@ -28,7 +28,7 @@ class Cacher:
 
     def update_tabs(self):
         """Reloads tabs from sessions which have changed since last update."""
-        
+
         for file in self.session_files:
             if os.path.getmtime(file) > self.last_update:
                 self.tabs_by_file[file] = load_session_tabs(file)
@@ -36,13 +36,13 @@ class Cacher:
 
     def update(self):
         """Reloads sessions and tabs which have changed since last update."""
-        
+
         self.update_sessions()
         self.update_tabs()
 
     def all_tabs(self, update=True):
         """List all known open tabs. If update is True, reloads the list."""
-        
+
         if update:
             self.update_tabs()
 

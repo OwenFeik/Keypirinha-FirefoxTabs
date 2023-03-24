@@ -34,7 +34,6 @@ class FirefoxTabs(kp.Plugin):
         self._on_suggest(user_input, False)
         self._on_suggest(user_input, True)
 
-    
     def _on_suggest(self, query, update):
         """Suggests tabs based on query. If update, updates tabs first."""
 

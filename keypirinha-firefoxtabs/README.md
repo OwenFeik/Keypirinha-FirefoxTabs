@@ -23,8 +23,12 @@ https://github.com/OwenFeik/fftabs/releases
 
 * Then, install the Firefox extension located at `/extension`, to switch to
     tabs when Firefox is launched by FirefoxTabs.
-* Finally install [`lz4`](https://github.com/lz4/lz4/releases) and add it to
-    `PATH` so that it can be used to decode `sessionstore.jsonlz4`.
+
+FirefoxTabs requires [`lz4`](https://github.com/lz4/lz4/releases). It is able
+to install it automatically, and will do so when launched. If it does so, the
+file will be placed in `%APPDATA%\Keypirinha\PackageData\FirefoxTabs`. However,
+if the `lz4` command is found in `PATH`, FirefoxTabs will check for an already
+installed DLL first.
 
 ## Usage
 
