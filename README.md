@@ -22,7 +22,10 @@ https://github.com/OwenFeik/Keypirinha-FirefoxTabs/releases
         `C:\Users\%USERNAME%\AppData\Roaming\Keypirinha\InstalledPackages`)
 
 * Then, install the Firefox extension located at `/extension`, to switch to
-    tabs when Firefox is launched by FirefoxTabs.
+    tabs when Firefox is launched by FirefoxTabs. This is available through
+    the Firefox [addon store](
+    https://addons.mozilla.org/en-US/firefox/addon/keypirinha-tab-switcher/
+    ).
 
 FirefoxTabs requires [`lz4`](https://github.com/lz4/lz4/releases). It is able
 to install it automatically, and will do so when launched. If it does so, the
