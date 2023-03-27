@@ -1,6 +1,6 @@
 {
     "manifest_version": 2,
-    "name": "Keypirinha FirefoxTabs",
+    "name": "Keypirinha Tab Switcher",
     "version": "1.0",
     "description": "Used by Keypirinha plugin to switch to open tab.",
     "background": {
