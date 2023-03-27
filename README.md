@@ -9,7 +9,7 @@ name suggests, Firefox tabs as suggestions in Keypirinha.
 
 ## Download
 
-https://github.com/OwenFeik/fftabs/releases
+https://github.com/OwenFeik/Keypirinha-FirefoxTabs/releases
 
 
 ## Install
