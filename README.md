@@ -40,3 +40,9 @@ appearing from it.
 ## License
 
 This package is distributed under the terms of the MIT license.
+
+## Publish
+
+* Run `.\build.ps1`.
+* If the Firefox extension has changed, it needs to be uploaded to
+    [`addons.mozilla.org`](https://addons.mozilla.org/).
